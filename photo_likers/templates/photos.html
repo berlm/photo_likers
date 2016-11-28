@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="pagination">
+    <span class="step-links">
+        {% if photos.has_previous %}
+            <a href="{% url 'photo_likers:photos' sort_field tags_list photos.previous_page_number %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ photos.number }} of {{ photos.paginator.num_pages }}.
+        </span>
+
+        {% if photos.has_next %}
+            <a href="{% url 'photo_likers:photos' sort_field tags_list  photos.next_page_number %}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+{% for photo in photos %}
+<img src="{{ photo.path }}" style="width:304px;height:228px;">
+{% endfor %}
+
+{% for tag in tag_refs %}
+    <a href="{% url 'photo_likers:photos' sort_field tag.ref page_number %}">{{ tag.ref_name }}</a><br/>
+{% endfor %}
+
+</body>
+</html>
