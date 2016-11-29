@@ -200,3 +200,37 @@ class MyTests(TestCase):
         photos.reverse()
         self.assertListEqual(list(photos_list), [photo for photo in photos if
                                                  tag_suit_photo(tags[0], photo) and not tag_suit_photo(tags[1], photo)])
+
+    def test_photos_repeat_query_1tag_in_1out(self):
+        """Фото по двум тегам один включается другой исключается
+          с повторением запроса для проверки кэширования"""
+        self.setup_user()
+        cnt_tags = 100
+        cnt_photos = 800
+        # CacheManager.SEARCH_CACHES_MEMORY_PAGE_STEP = 2  # выставляем, чтобы реально проверить кэширования
+        tags = self.__photo_environment.setup_tags(cnt=cnt_tags, name_function=lambda i: i)
+
+        def tag_suit_photo(x, y): return x.id % 10 == y.id % 10
+
+        def tags_function(photo): return [tag for tag in tags if tag_suit_photo(tag, photo)]
+
+        photos = self.__photo_environment.setup_photos(cnt=cnt_photos, likes_function=lambda i: i,
+                                                       date_function=lambda i: datetime.now() + timedelta(
+                                                           days=i - cnt_photos),
+                                                       tags_function=tags_function)
+        CacheManager().load_photos_cache()
+
+        response = self.client.get(
+            path=reverse('photo_likers:photos', kwargs={'page_number': 1, 'sort_field': 1,
+                                                        'tags_list': "{0};-{1}".format(tags[0].id, tags[1].id)}))
+        self.assertEqual(response.status_code, 200)
+        page_number = 3
+        response = self.client.get(
+            path=reverse('photo_likers:photos', kwargs={'page_number': page_number, 'sort_field': 1,
+                                                        'tags_list': "{0};-{1}".format(tags[0].id, tags[1].id)}))
+
+        photos_list = response.context['photos']
+        photos = [photo for photo in photos if tag_suit_photo(tags[0], photo) and not tag_suit_photo(tags[1], photo)]
+        photos.reverse()
+        self.assertListEqual(list(photos_list),
+                             photos[(page_number - 1) * PHOTOS_PER_PAGE:page_number * PHOTOS_PER_PAGE])

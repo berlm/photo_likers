@@ -22,7 +22,8 @@ if __name__ == "__main__":
 
     def tags_function(photo): return sample(tags[(photo.id % 10) * 10: ((photo.id % 10) + 1) * 10], 5)
 
-    env.setup_photos(100000,
+
+    env.setup_photos(1000000,
                      likes_function=lambda i: randint(1, 1000),
-                     date_function=lambda i: datetime.now() - timedelta(days=i),
+                     date_function=lambda i: datetime.now() - timedelta(days=randint(1, 1000)),
                      tags_function=tags_function)

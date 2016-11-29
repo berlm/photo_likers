@@ -5,6 +5,10 @@
     <title>Title</title>
 </head>
 <body>
+<div>
+    <a href="{% url 'photo_likers:photos' 0 tags_list  photos.number %}">Sort by likes</a>
+    <a href="{% url 'photo_likers:photos' 1 tags_list  photos.number %}">Sort by date</a>
+</div>
 <div class="pagination">
     <span class="step-links">
         {% if photos.has_previous %}
@@ -22,7 +26,10 @@
 </div>
 
 {% for photo in photos %}
-<img src="{{ photo.path }}" style="width:304px;height:228px;">
+<figure>
+    <img src="{{ photo.path }}" style="width:304px;height:228px;" />
+    <figcaption>Likes {{ photo.likes_cnt }}; Date {{ photo.created_date }}</figcaption>
+</figure>
 {% endfor %}
 
 {% for tag in tag_refs %}

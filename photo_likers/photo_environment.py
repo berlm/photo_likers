@@ -3,7 +3,6 @@ import random as rd
 from .models import Photo, Tag
 
 
-
 class PhotoEnvironment:
     SAMPLE_PHTOTOS_PATH = 'photo_likers\\data\\test-photo.csv'
 
@@ -43,7 +42,7 @@ class PhotoEnvironment:
             i += 1
 
         if cnt > len(res):
-            for id, row in df_photos.sample(cnt - len(res)).iterrows():
+            for id, row in df_photos.sample(cnt - len(res), replace=True).iterrows():
                 res.append(create_photo(row, i))
                 i += 1
 
