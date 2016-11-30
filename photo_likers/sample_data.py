@@ -1,5 +1,4 @@
 import os
-
 import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "PhotoLikers.settings")
@@ -14,7 +13,7 @@ if __name__ == "__main__":
     env = PhotoEnvironment()
     Photo.objects.all().delete()
     Tag.objects.all().delete()
-    env.SAMPLE_PHTOTOS_PATH = 'data\\test-photo.csv'
+    env.SAMPLE_PHOTOS_PATH = 'data\\test-photo.csv'
     tags = env.setup_tags(cnt=100, name_function=lambda i: i)
 
 

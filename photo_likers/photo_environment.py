@@ -1,12 +1,18 @@
 import pandas as pd
-import random as rd
+
 from .models import Photo, Tag
 
 
 class PhotoEnvironment:
-    SAMPLE_PHTOTOS_PATH = 'photo_likers\\data\\test-photo.csv'
+    """Генерация данных по фото для тестирования
 
-    def setup_tags(self, cnt: int, name_function) -> list:
+       setup_tags: генерация тегов
+       setup_photos: генерация фото и связей с тегами
+    """
+    SAMPLE_PHOTOS_PATH = 'photo_likers\\data\\test-photo.csv'
+
+    @staticmethod
+    def setup_tags(cnt: int, name_function) -> list:
         """:return: list[Tag]"""
         res = []
         for i in range(cnt):
@@ -29,7 +35,7 @@ class PhotoEnvironment:
 
             return photo
 
-        df_photos = pd.read_csv(self.SAMPLE_PHTOTOS_PATH, sep=';', parse_dates=True, infer_datetime_format=True)
+        df_photos = pd.read_csv(self.SAMPLE_PHOTOS_PATH, sep=';', parse_dates=True, infer_datetime_format=True)
         if len(df_photos) > cnt:
             df_photos = df_photos.iloc[:cnt, :]
 
