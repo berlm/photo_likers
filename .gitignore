@@ -3,6 +3,11 @@ venv
 staticfiles
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/inspectionProfiles/Project_Default.xml
-.idea/inspectionProfiles/Project_Default.xml
 *.iml
 db.sqlite3
+/.idea/
+.idea/inspectionProfiles/
+PhotoLikers/__pycache__/
+photo_likers/__pycache__/
+photo_likers/migrations/__pycache__/
+photo_likers/templates/__pycache__/
