@@ -10,7 +10,7 @@
     <a href="{% url 'photo_likers:photos' 1 tags_list  photos.number %}">Sort by date</a>
 </div>
 {% for tag in tag_refs %}
-    <a href="{% url 'photo_likers:photos' sort_field tag.ref page_number %}"> {{ tag.ref_name }} </a>
+    <a href="{% url 'photo_likers:photos' sort_field tag.ref 1 %}"> {{ tag.ref_name }} </a>
 {% endfor %}
 <div class="pagination">
     <span class="step-links">
