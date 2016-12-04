@@ -46,7 +46,7 @@ class SortedListSearcher:
             self.__num_pages = search_cache_data[CacheManager.NUM_PAGES_KEY]
             checkpoints = search_cache_data[CacheManager.CHECKPOINTS_KEY]
             checkpoint_index = min(max((page_number - 1) // CacheManager.SEARCH_CACHES_MEMORY_PAGE_STEP, 0),
-                                   len(checkpoints)-1)
+                                   len(checkpoints) - 1)
             self.cnt_found = checkpoint_index * CacheManager.SEARCH_CACHES_MEMORY_PAGE_STEP * PHOTOS_PER_PAGE
             self.__pointers = checkpoints[checkpoint_index]
         else:
@@ -55,19 +55,34 @@ class SortedListSearcher:
             self.__pointers = [0] * self.cnt_lists
 
     def next(self):
+        def seacrh_first_not_greater(value: int, arr_values, start_index: int) -> int:
+            j = start_index
+            for step in [2 ** (i - 1) for i in range(15, 0, -1)]:
+                while j < len(arr_values) and arr_values[j] > value:
+                    j += step
+                if j > start_index and step > 1:
+                    j -= step
+                if arr_values[j] <= value:
+                    break
+            return j
+
         if not self.has_next():
             return None
         # получаем значение хэша в первом списке и
         # соответственно двигаем указатели в остальных
         main_value = self.tag_sorted_lists[0][self.__pointers[0]]
+        smallest_inclusive_value = main_value
         for pointer_index in range(1, self.cnt_lists):
-            i = self.__pointers[pointer_index]
-            while self.tag_sorted_lists[pointer_index][i] > main_value:
-                i += 1
+            i = seacrh_first_not_greater(main_value, self.tag_sorted_lists[pointer_index],
+                                         self.__pointers[pointer_index])
             self.__pointers[pointer_index] = i
             # если в соответствующем списке нет заданного фото и условие на тег
             # включающее или наоборот, то это фото не подходит под фильтр
-            if (self.tag_sorted_lists[pointer_index][i] == main_value) != self.tag_signs[pointer_index]:
+            if self.tag_signs[pointer_index] != (self.tag_sorted_lists[pointer_index][i] == main_value):
+                if self.tag_signs[pointer_index]:
+                    # для тегов, которые должны присутствовать сохраняем значение,
+                    # чтобы сдвинуть первый указатель сразу до соответствующего места
+                    smallest_inclusive_value = self.tag_sorted_lists[pointer_index][i]
                 main_value = None
                 break
         else:
@@ -76,7 +91,8 @@ class SortedListSearcher:
             self.cnt_found += 1
 
         # не забываем двигать указатель в первом списке
-        self.__pointers[0] += 1
+        self.__pointers[0] = seacrh_first_not_greater(smallest_inclusive_value, self.tag_sorted_lists[0],
+                                                      self.__pointers[0] + 1)
         return main_value
 
     def has_next(self):
