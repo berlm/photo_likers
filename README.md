@@ -17,8 +17,10 @@ $ pip install -r requirements.txt
 ```
 * Create an empty MySQL (or other) database and configure either 
 the DATABASE_URL environment variable to point to your database 
-or configure it directly in ./PhotoLikers/settings.py. By default 
-it connects to MySQL database named photo_likers on localhost:3060.
+or configure it directly in ./PhotoLikers/settings.py. By default, 
+it connects to MySQL database named photo_likers on localhost:3060 and 
+if there is a user "root" with empty password the value of DATABASE_URL 
+must be "mysql://localhost:3306/photo_likers?user=root;password=;"
 
 Depending on your database install python package for working with this database,
 e.g. mysql-python or mysqlclient for MySQL.
